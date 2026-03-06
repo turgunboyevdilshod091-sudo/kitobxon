@@ -1,0 +1,32 @@
+# Created by https://www.toptal.com/developers/gitignore/api/venv,dotenv,sam+config
+# Edit at https://www.toptal.com/developers/gitignore?templates=venv,dotenv,sam+config
+
+### dotenv ###
+.env
+
+### SAM+config ###
+# Ignore build directories for the AWS Serverless Application Model (SAM)
+# Info: https://aws.amazon.com/serverless/sam/
+# Docs: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-reference.html
+
+**/.aws-sam
+
+### SAM+config Patch ###
+# SAM config - exclude this file if sharing publicly
+samconfig.toml
+
+### venv ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+.Python
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
+pip-selfcheck.json
+
+# End of https://www.toptal.com/developers/gitignore/api/venv,dotenv,sam+config
