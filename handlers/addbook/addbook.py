@@ -70,18 +70,9 @@ async def get_image(msg:Message, state: FSMContext):
     await state.set_state(AddBook.file_id)
 
 @addbook_router.message(AddBook.file_id, F.document)
-async def get_file(msg:Message, state: FSMContext):
+async def get_file(msg:Message, state: FSMContext,db):
     await state.update_data(file_id=msg.document.file_id)
-    await msg.answer("🎧 Kitobning **audio** faylini yuboring (bo'lmasa /skip bosing):")
-    await state.set_state(AddBook.audio_id)
-
-@addbook_router.message(AddBook.audio_id)
-async def get_audio_and_save(msg:Message, state: FSMContext, db):
-    data = await state.get_data()
-    
-    audio_id = msg.audio.file_id if msg.audio else None
-    if msg.text == "/skip":
-        audio_id = None
+    data= await state.get_data()
 
     await db.add_books(
         title=data['title'],
@@ -91,8 +82,6 @@ async def get_audio_and_save(msg:Message, state: FSMContext, db):
         sub_category=data['sub_caterogy'],
         image_id=data['image_id'],
         file_id=data['file_id'],
-        audio_id=audio_id
     )
-
     await msg.answer("✅ Kitob muvaffaqiyatli bazaga qo'shildi!", reply_markup=admin_buttons())
     await state.clear()

@@ -8,4 +8,3 @@ class AddBook(StatesGroup):
     sub_caterogy=State()
     image_id=State()
     file_id=State()
-    audio_id=State()

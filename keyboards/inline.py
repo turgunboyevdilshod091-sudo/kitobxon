@@ -201,3 +201,14 @@ def saqlangan_kitoblar(book_id):
     
     builder.adjust(1)
     return builder.as_markup()
+
+
+def foydali_maslahatlar():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="1. Mutolaa Madaniyatini Shakllantirish",callback_data="1-f")],
+            [InlineKeyboardButton(text="2. Samarali o‘qish Texnikalari",callback_data="2-f")],
+            [InlineKeyboardButton(text="3. To‘g‘ri Kitob Tanlash",callback_data="3-f")],
+            [InlineKeyboardButton(text="4. O‘qilganlarni amalda qo‘llash",callback_data="4-f")]
+        ]
+    )

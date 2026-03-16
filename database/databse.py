@@ -13,83 +13,39 @@ class Database:
             host=config.DB_HOST,
             port=config.DB_PORT
         )
-        # Pool yaratilgach, jadvallarni tekshirib olamiz
-        await self.create_tables()
 
-    async def create_tables(self):
-        # 1. Foydalanuvchilar jadvali (role qo'shildi)
-        users_query = """
-        CREATE TABLE IF NOT EXISTS users (
-            user_id BIGINT PRIMARY KEY,
-            full_name TEXT,
-            username TEXT,
-            role TEXT DEFAULT 'user',
-            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-        """
-        
-        # 2. Kitoblar jadvali (sub_category va audio_id qo'shildi)
-        books_query = """
-        CREATE TABLE IF NOT EXISTS books (
-            id SERIAL PRIMARY KEY,
-            title TEXT NOT NULL,
-            author TEXT,
-            description TEXT,
-            category TEXT,
-            sub_category TEXT,
-            image_id TEXT,
-            file_id TEXT,
-            audio_id TEXT
-        );
-        """
-        
-        # 3. Saqlangan kitoblar jadvali
-        saved_books_query = """
-        CREATE TABLE IF NOT EXISTS saved_books (
-            id SERIAL PRIMARY KEY,
-            user_id BIGINT REFERENCES users(user_id) ON DELETE CASCADE,
-            book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
-            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE(user_id, book_id)
-        );
-        """
-
-        async with self.pool.acquire() as conn:
-            await conn.execute(users_query)
-            await conn.execute(books_query)
-            await conn.execute(saved_books_query)
-            print("✅ Barcha jadvallar (users, books, saved_books) yaratildi.")
-
-    # --- USER METODLARI ---
-
-    async def add_user(self, user_id, full_name, username):
+    async def add_user(self, telegram_id, username):
         query = """
-        INSERT INTO users (user_id, full_name, username) 
-        VALUES ($1, $2, $3) 
-        ON CONFLICT (user_id) DO NOTHING;
+        INSERT INTO users (username,telegram_id) 
+        VALUES ($1, $2) 
+        ON CONFLICT (telegram_id) DO NOTHING;
         """
-        await self.pool.execute(query, user_id, full_name, username)
+        await self.pool.execute(query,telegram_id,username)
 
-    async def get_user_role(self, user_id):
-        query = "SELECT role FROM users WHERE user_id = $1;"
-        return await self.pool.fetchval(query, user_id)
+    async def get_user_role(self, telegram_id):
+        query = "SELECT role FROM users WHERE telegram_id = $1;"
+        return await self.pool.fetchval(query, telegram_id)
 
-    async def set_user_role(self, user_id, role):
-        query = "UPDATE users SET role = $1 WHERE user_id = $2;"
-        await self.pool.execute(query, role, user_id)
+    async def set_user_role(self, telegram_id, role):
+        query = "UPDATE users SET role = $1 WHERE telegram_id = $2;"
+        await self.pool.execute(query, role, telegram_id)
 
     async def get_users(self):
-        query = "SELECT user_id, username, full_name, role FROM users ORDER BY joined_at DESC;"
+        query = "SELECT telegram_id, username, role FROM users ORDER BY id DESC;"
         return await self.pool.fetch(query)
+    
+    async def get_user(self,telegram_id):
+        query = "SELECT telegram_id, username, role FROM users where telegram_id=$1"
+        return await self.pool.fetchrow(query,telegram_id)
 
     # --- BOOK METODLARI ---
 
-    async def add_books(self, title, author, description, category, sub_category, image_id, file_id, audio_id):
+    async def add_books(self, title, author, description, category, sub_category, image_id, file_id):
         query = """
-        INSERT INTO books (title, author, description, category, sub_category, image_id, file_id, audio_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        INSERT INTO books (title, author, description, category, sub_category, image_id, file_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7);
         """
-        await self.pool.execute(query, title, author, description, category, sub_category, image_id, file_id, audio_id)
+        await self.pool.execute(query, title, author, description, category, sub_category, image_id, file_id)
 
     async def get_book(self, sub_category):
         query = """
@@ -123,3 +79,40 @@ class Database:
             ORDER BY s.added_at DESC;
         """
         return await self.pool.fetch(query, user_id)
+    
+    async def search_books(self, query):
+        sql = """
+        SELECT id, title, author 
+        FROM books 
+        WHERE title ILIKE $1 OR author ILIKE $1
+        LIMIT 10;
+        """
+        return await self.pool.fetch(sql, f'%{query}%')
+
+    async def get_top_books(self):
+        query = """
+        SELECT id, title, author, views 
+        FROM books 
+        ORDER BY views DESC 
+        LIMIT 10;
+        """
+        return await self.pool.fetch(query)
+
+    async def increment_views(self, book_id):
+        """Kitob ko'rilganda uning ko'rishlar sonini +1 qilish"""
+        query = "UPDATE books SET views = views + 1 WHERE id = $1"
+        await self.pool.execute(query, int(book_id))
+
+#statistika
+
+    async def get_bot_stats(self):
+        users_count=await self.pool.fetchval("select count(*) from users")
+        books_count=await self.pool.fetchval("select count(*) from books")
+        total_views=await self.pool.fetchval("select sum(views) from books")
+        top_book=await self.pool.fetch('select title,views from books order by views desc limit 3')
+        return {
+            "users": users_count,
+            "books": books_count,
+            "views": total_views,
+            "top": top_book
+        }

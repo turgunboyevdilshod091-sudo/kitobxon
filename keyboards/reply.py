@@ -5,7 +5,7 @@ def start_reply():
         keyboard=[
             [
                 KeyboardButton(text="📚 Kitoblar olami"),
-                KeyboardButton(text="🎧 Audio-kitoblar")
+                KeyboardButton(text="🔥 TOP kitoblar")
             ],
             [
                 KeyboardButton(text="🔍 Qidiruv"),
@@ -36,7 +36,17 @@ def admin_start_reply():
         keyboard=[
             [KeyboardButton(text="📚 Kitoblar olami"),KeyboardButton(text="⭐ Saqlanganlar")],
             [KeyboardButton(text="🔍 Qidiruv"),KeyboardButton(text="📊 Foydali maslahatlar")],
-            [KeyboardButton(text="⚙️ Sozlamalar"),KeyboardButton(text="Admin panel")],
+            [KeyboardButton(text="⚙️ Sozlamalar"),KeyboardButton(text="🔥 TOP kitoblar")],
+            [KeyboardButton(text="Admin panel")]
         ],
         resize_keyboard=True
+    )
+def sozlamalar():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="👤 Profilim")],
+            [KeyboardButton(text="🆘 Adminga yozish")],
+            [KeyboardButton(text="ℹ️ Bot haqida")],
+            [KeyboardButton(text="⬅️ Orqaga")]
+        ],resize_keyboard=True
     )

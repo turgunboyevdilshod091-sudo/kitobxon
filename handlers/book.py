@@ -120,6 +120,7 @@ async def list_books_by_category(call:CallbackQuery, db):
 async def send_book_info(call:CallbackQuery, db):
     book_id = call.data.split(":")[1]
     book = await db.get_book_details(book_id)
+    await db.increment_views(book_id)
 
     if book:
         await call.message.delete()
@@ -139,5 +140,3 @@ async def send_book_info(call:CallbackQuery, db):
             caption=f"📄 {book['title']} (Elektron variant)"
         )
     await call.answer()
-
-    
