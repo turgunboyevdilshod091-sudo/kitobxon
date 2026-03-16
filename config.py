@@ -13,6 +13,7 @@ class Config:
     DB_NAME: str = os.getenv("DB_NAME")
     DB_USER: str = os.getenv("DB_USER")
     DB_PASSWORD: str = os.getenv("DB_PASSWORD")
+    DB_URL:str=os.getenv("DB_URL")
 
 
 config = Config()
