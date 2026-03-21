@@ -1,12 +1,20 @@
 import asyncpg
-from config import config
 import os
+from config import config
 
 class Database:
     def __init__(self):
         self.pool = None
 
     async def connect(self):
+        # Panelda DB_URL deb yozilgani uchun bu yerda ham DB_URL deb o'qiymiz
+        dsn = os.getenv("DB_URL") 
+        
+        if dsn:
+            # Agar DB_URL topilsa, u orqali ulanamiz
+            self.pool = await asyncpg.create_pool(dsn=dsn)
+        else:
+            # Agar topilmasa, config dagi alohida ma'lumotlarga o'tamiz
             self.pool = await asyncpg.create_pool(
                 user=config.DB_USER,
                 password=config.DB_PASSWORD,
