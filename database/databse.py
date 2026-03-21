@@ -1,21 +1,20 @@
 import asyncpg
 import os
-from config import config  # config obyektini import qilganingizga ishonch hosil qiling
+from config import config
 
 class Database:
     def __init__(self):
         self.pool = None
 
     async def connect(self):
-        # Railway-da DATABASE_URL o'zgaruvchisi barcha ma'lumotlarni o'z ichiga oladi
-        # Agar u bo'lmasa, config ichidagi ma'lumotlardan DSN yig'amiz
-        dsn = os.getenv("DATABASE_URL")
+        # Panelda DB_URL deb yozilgani uchun bu yerda ham DB_URL deb o'qiymiz
+        dsn = os.getenv("DB_URL") 
         
         if dsn:
-            # Eng ishonchli usul - tayyor URL orqali ulanish
+            # Agar DB_URL topilsa, u orqali ulanamiz
             self.pool = await asyncpg.create_pool(dsn=dsn)
         else:
-            # Agar DATABASE_URL bo'lmasa (masalan, localda), eski usulda ulanadi
+            # Agar topilmasa, config dagi alohida ma'lumotlarga o'tamiz
             self.pool = await asyncpg.create_pool(
                 user=config.DB_USER,
                 password=config.DB_PASSWORD,
