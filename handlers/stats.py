@@ -1,5 +1,6 @@
 from aiogram import F,Router
 from aiogram.types import Message
+import datetime
 
 router=Router()
 
@@ -18,6 +19,7 @@ async def stats(msg: Message, db):
     else:
         top_books_text = "Hozircha ma'lumot yo'q."
 
+    current_time = datetime.datetime.now().strftime("%H:%M:%S")
     # 2. Asosiy xabarni shakllantiramiz
     stats_msg = (
         "<b>📊 BOT STATISTIKASI</b>\n"
@@ -28,7 +30,7 @@ async def stats(msg: Message, db):
         f"🔥 <b>TOP 3 KITOB:</b>\n"
         f"{top_books_text}" # Endi bu yerda toza matn bo'ladi
         "━━━━━━━━━━━━━━━\n"
-        f"🕒 <i>Yangilangan vaqt: {msg.date.strftime('%H:%M:%S')}</i>"
+        f"🕒 Yangilangan vaqt: {current_time}"
     )
     
     await msg.answer(stats_msg, parse_mode="HTML")

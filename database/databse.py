@@ -7,11 +7,6 @@ class Database:
         self.pool = None
 
     async def connect(self):
-        dsn = os.getenv("DB_URL")
-        
-        if dsn:
-            self.pool = await asyncpg.create_pool(dsn=dsn)
-        else:
             self.pool = await asyncpg.create_pool(
                 user=config.DB_USER,
                 password=config.DB_PASSWORD,
@@ -94,6 +89,15 @@ class Database:
         LIMIT 10;
         """
         return await self.pool.fetch(sql, f'%{query}%')
+    
+    async def search_book(self, query):
+        sql = """
+        SELECT id, title, author, description
+        FROM books 
+        WHERE title ILIKE $1 OR author ILIKE $1
+        LIMIT 10;
+        """
+        return await self.pool.fetch(sql, f'%{query}%')
 
     async def get_top_books(self):
         query = """
@@ -122,3 +126,11 @@ class Database:
             "views": total_views,
             "top": top_book
         }
+    
+    #random
+
+    async def random_book(self):
+        query="""
+        select * from books order by random() limit 1;
+        """
+        return await self.pool.fetchrow(query)

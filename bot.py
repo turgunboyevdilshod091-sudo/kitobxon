@@ -13,6 +13,8 @@ from handlers.foydali import router as foydali_maslahatlar_router
 from handlers.views import router as views_router
 from handlers.settings import router as settings_router
 from handlers.stats import router as stats_router
+from handlers.random import router as random_router
+from handlers.inline_mode import router as inline_mode_router
 
 async def main():
     bot = Bot(token=config.BOT_TOKEN)
@@ -29,6 +31,8 @@ async def main():
     dp.include_router(save_router)
     dp.include_router(book_router)
     dp.include_router(views_router)
+    dp.include_router(random_router)
+    dp.include_router(inline_mode_router)
     dp.include_router(settings_router)
     dp.include_router(stats_router)
     dp.include_router(foydali_maslahatlar_router)
