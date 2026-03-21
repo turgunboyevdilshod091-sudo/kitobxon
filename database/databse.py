@@ -1,6 +1,9 @@
 import asyncpg
 import os
 from config import config
+from dotenv import load_dotenv
+load_dotenv()
+
 
 class Database:
     def __init__(self):
