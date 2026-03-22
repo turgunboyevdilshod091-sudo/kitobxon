@@ -30,13 +30,13 @@ async def main():
     dp.include_router(add_router)
     dp.include_router(save_router)
     dp.include_router(book_router)
+    dp.include_router(search_router)
     dp.include_router(views_router)
     dp.include_router(random_router)
     dp.include_router(inline_mode_router)
     dp.include_router(settings_router)
     dp.include_router(stats_router)
     dp.include_router(foydali_maslahatlar_router)
-    dp.include_router(search_router)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
