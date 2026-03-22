@@ -63,9 +63,4 @@ async def check_callback(callback: types.CallbackQuery, bot: Bot, db):
             "Siz hali kanalga a'zo bo'lmadingiz! ❌", 
             show_alert=True
         )
-
-@router.message(F.text == "🔍 Qidiruv")
-async def search_cmd(msg: Message, bot: Bot):
-    if not await check_sub(bot, msg.from_user.id, CHANNEL_ID):
-        return await msg.answer("Avval kanalga a'zo bo'ling! @SheriyOlam1")
     
