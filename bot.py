@@ -25,9 +25,9 @@ async def main():
 
     dp["db"] = db
 
+    dp.include_router(search_router)
     dp.include_router(start_router)
     dp.include_router(admin_router)
-    dp.include_router(search_router)
     dp.include_router(add_router)
     dp.include_router(save_router)
     dp.include_router(book_router)

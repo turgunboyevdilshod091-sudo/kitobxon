@@ -7,21 +7,13 @@ class Database:
         self.pool = None
 
     async def connect(self):
-        # Panelda DB_URL deb yozilgani uchun bu yerda ham DB_URL deb o'qiymiz
-        dsn = os.getenv("DB_URL") 
-        
-        if dsn:
-            # Agar DB_URL topilsa, u orqali ulanamiz
-            self.pool = await asyncpg.create_pool(dsn=dsn)
-        else:
-            # Agar topilmasa, config dagi alohida ma'lumotlarga o'tamiz
-            self.pool = await asyncpg.create_pool(
-                user=config.DB_USER,
-                password=config.DB_PASSWORD,
-                database=config.DB_NAME,
-                host=config.DB_HOST,
-                port=config.DB_PORT
-            )
+        self.pool = await asyncpg.create_pool(
+            user=config.DB_USER,
+            password=config.DB_PASSWORD,
+            database=config.DB_NAME,
+            host=config.DB_HOST,
+            port=config.DB_PORT
+        )
 
     async def add_user(self, telegram_id, username):
         query = """
